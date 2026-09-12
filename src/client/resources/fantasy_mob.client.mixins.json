@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.fantasy.mob.client.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "CreativeInventoryScreenMobGuiButtonMixin",
+    "InventoryScreenMobGuiButtonMixin",
+    "MobGuiHandledScreenAccessor",
+    "ScreenAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
