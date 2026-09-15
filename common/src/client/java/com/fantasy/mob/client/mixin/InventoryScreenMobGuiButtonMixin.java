@@ -28,6 +28,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.ScreenPos;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -39,13 +40,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(InventoryScreen.class)
 public abstract class InventoryScreenMobGuiButtonMixin {
 
+    @Invoker("getRecipeBookButtonPos")
+    protected abstract ScreenPos invokeGetRecipeBookButtonPos();
+
     @Inject(method = "init", at = @At("RETURN"))
     private void fantasy_mob_addButton(CallbackInfo ci) {
         if (!MobGuiButton.isVisible()) return;
         InventoryScreen screen = (InventoryScreen) (Object) this;
         ScreenAccessor screenAccessor = (ScreenAccessor) screen;
         // 配方书按钮的位置 → 其右侧放我们的图标按钮
-        ScreenPos pos = screen.getRecipeBookButtonPos();
+        ScreenPos pos = invokeGetRecipeBookButtonPos();
         int x = pos.x() + 24;
         int y = pos.y();
         Runnable onClick = MobGuiButton.getOnClick();
