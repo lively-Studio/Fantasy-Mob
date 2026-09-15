@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "fantasy_mob",
+  "version": "${version}",
+  "name": "Fantasy: Mob",
+  "description": "一个通用生物 GUI/GUIforMob 库模组——为在创造/生存物品栏提供「已驯服生物列表→打开背包」入口，并允许各模组控制其显隐。",
+  "authors": [
+    "lively-Studio"
+  ],
+  "contact": {
+    "homepage": "https://github.com/lively-Studio/Fantasy-the-end",
+    "sources": "https://github.com/lively-Studio/Fantasy-the-end"
+  },
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.fantasy.mob.FantasyMob"
+    ],
+    "client": [
+      "com.fantasy.mob.client.FantasyMobClient"
+    ]
+  },
+  "mixins": [
+    "fantasy_mob.mixins.json",
+    {
+      "config": "fantasy_mob.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~26.2",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
