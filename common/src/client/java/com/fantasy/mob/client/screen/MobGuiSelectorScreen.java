@@ -33,7 +33,7 @@ import net.minecraft.text.Text;
 
 /**
  * 多只已驯服生物时的选择界面：每只一个按钮，点击打开其背包。
- * 通用，不依赖任何特定生物类型。
+ * 贴近原版风格，通用，不依赖任何特定生物类型。
  */
 public class MobGuiSelectorScreen extends Screen {
 
@@ -41,43 +41,49 @@ public class MobGuiSelectorScreen extends Screen {
     private final String[] names;
 
     public MobGuiSelectorScreen(int[] ids, String[] names) {
-        super(Text.literal("选择已驯服的生物"));
+        super(Text.translatable("fantasy_mob.selector.title"));
         this.ids = ids;
         this.names = names;
     }
 
     @Override
     protected void init() {
+        int buttonW = 220;
+
         GridWidget grid = new GridWidget();
-        grid.getMainPositioner().margin(4);
+        grid.getMainPositioner().alignHorizontalCenter().margin(6, 2);
         GridWidget.Adder adder = grid.createAdder(1);
 
         for (int i = 0; i < ids.length; i++) {
             final int entityId = ids[i];
             String label = (i < names.length && names[i] != null && !names[i].isBlank())
-                    ? names[i] : "生物 #" + entityId;
+                    ? names[i] : Text.translatable("fantasy_mob.selector.open").getString() + " #" + entityId;
             adder.add(ButtonWidget.builder(
                     Text.literal(label),
                     btn -> {
                         ClientPlayNetworking.send(new MobNetworking.OpenMobBackpackPayload(entityId));
                         if (this.client != null) this.client.setScreen(null);
                     }
-            ).width(180).build());
+            ).width(buttonW).build());
         }
 
         adder.add(ButtonWidget.builder(
                 ScreenTexts.CANCEL,
                 btn -> this.close()
-        ).width(180).build());
+        ).width(buttonW).build());
 
-        grid.setPosition((this.width - 180) / 2, this.height / 2 - ids.length * 12);
+        grid.refreshPositions();
+        // 垂直置中：以按钮堆为中心
+        grid.setPosition((this.width - buttonW) / 2,
+                this.height / 2 - (ids.length * 24 + 16) / 2);
         grid.forEachChild(this::addDrawableChild);
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         this.renderBackground(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title,
+                this.width / 2, 24, 0xFFFFFF);
         super.render(context, mouseX, mouseY, delta);
     }
 }

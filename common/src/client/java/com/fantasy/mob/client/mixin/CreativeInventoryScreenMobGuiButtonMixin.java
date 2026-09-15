@@ -22,33 +22,30 @@
 
 package com.fantasy.mob.client.mixin;
 
+import com.fantasy.mob.MobCreativeTab;
 import com.fantasy.mob.client.MobGuiButton;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.item.ItemGroup;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * 在创造模式物品栏界面添加「已驯服生物」按钮（仅当 {@link MobGuiButton#isVisible()}）。
+ * 创造模式：点击「生物背包」标签页时，不进入空白物品种类网格，
+ * 而是直接打开通用的「已驯服生物 → 打开背包」界面（仅当 {@link MobGuiButton#isVisible()}）。
  */
 @Mixin(CreativeInventoryScreen.class)
 public abstract class CreativeInventoryScreenMobGuiButtonMixin {
 
-    @Inject(method = "init", at = @At("RETURN"))
-    private void fantasy_mob_addButton(CallbackInfo ci) {
+    @Inject(method = "setSelectedTab", at = @At("HEAD"), cancellable = true)
+    private void fantasy_mob_openBackpackOnTab(ItemGroup group, CallbackInfo ci) {
         if (!MobGuiButton.isVisible()) return;
-        CreativeInventoryScreen screen = (CreativeInventoryScreen) (Object) this;
-        MobGuiHandledScreenAccessor accessor = (MobGuiHandledScreenAccessor) screen;
-        ScreenAccessor screenAccessor = (ScreenAccessor) screen;
-        int x = accessor.getX() + accessor.getBackgroundWidth() - 90;
-        int y = accessor.getY() + 4;
+        if (!MobCreativeTab.isMobTab(group)) return;
+        // 不切换/保留在空白标签页，取消选择并打开生物背包选择器
+        ci.cancel();
         Runnable onClick = MobGuiButton.getOnClick();
-        screenAccessor.invokeAddDrawableChild(ButtonWidget.builder(
-                MobGuiButton.getText(),
-                btn -> MinecraftClient.getInstance().execute(onClick)
-        ).dimensions(x, y, 78, 20).build());
+        MinecraftClient.getInstance().execute(onClick);
     }
 }

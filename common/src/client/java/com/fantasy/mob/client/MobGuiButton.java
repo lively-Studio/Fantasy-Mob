@@ -22,24 +22,30 @@
 
 package com.fantasy.mob.client;
 
+import com.fantasy.mob.MobCreativeTab;
 import com.fantasy.mob.network.MobNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
+import java.util.function.Supplier;
+
 /**
- * 库里「已驯服生物」入口按钮的客户端状态（静态单例）。
- * 供消费方模组控制：是否显示、按钮文案、点击行为。
+ * 库里「生物背包」入口的客户端状态（静态单例）。
+ * 供消费方模组控制：是否显示、按钮文案、图标与点击行为。
+ * 生存物品栏入口与创造标签页共用此配置。
  */
 public final class MobGuiButton {
 
     private static volatile boolean visible = false;
-    private static volatile Text text = Text.literal("末影人");
+    private static volatile Text text = Text.translatable("itemGroup.fantasy_mob.mob_backpack");
     private static volatile Runnable onClick = () -> ClientPlayNetworking.send(new MobNetworking.RequestMobListPayload());
+    private static volatile Supplier<ItemStack> icon = MobCreativeTab::getIcon;
 
     private MobGuiButton() {
     }
 
-    /** 是否在生存/创造物品栏显示按钮。默认 false（不显示）。 */
+    /** 是否在生存物品栏 / 创造标签页显示入口。默认 false（不显示）。 */
     public static boolean isVisible() {
         return visible;
     }
@@ -48,6 +54,7 @@ public final class MobGuiButton {
         MobGuiButton.visible = visible;
     }
 
+    /** 按钮提示 / 标签文案（默认“生物背包”）。 */
     public static Text getText() {
         return text;
     }
@@ -62,5 +69,15 @@ public final class MobGuiButton {
 
     public static void setOnClick(Runnable onClick) {
         MobGuiButton.onClick = onClick != null ? onClick : MobGuiButton.onClick;
+    }
+
+    /** 生存入口按钮渲染的图标（默认与创造标签页图标一致）。 */
+    public static ItemStack getIcon() {
+        Supplier<ItemStack> s = icon;
+        return s != null ? s.get() : ItemStack.EMPTY;
+    }
+
+    public static void setIcon(Supplier<ItemStack> icon) {
+        if (icon != null) MobGuiButton.icon = icon;
     }
 }

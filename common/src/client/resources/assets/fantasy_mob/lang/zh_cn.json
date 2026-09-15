@@ -1,0 +1,7 @@
+{
+  "itemGroup.fantasy_mob.mob_backpack": "生物背包",
+  "fantasy_mob.button.tooltip": "打开已驯服生物的背包",
+  "fantasy_mob.selector.title": "已驯服的生物",
+  "fantasy_mob.selector.empty": "你还没有已驯服的生物",
+  "fantasy_mob.selector.open": "打开背包"
+}

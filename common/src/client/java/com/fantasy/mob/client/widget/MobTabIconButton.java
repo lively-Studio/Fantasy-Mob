@@ -20,25 +20,35 @@
  * SOFTWARE.
  */
 
-package com.fantasy.mob;
+package com.fantasy.mob.client.widget;
 
-import com.fantasy.mob.network.MobNetworking;
-import net.fabricmc.api.ModInitializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 
 /**
- * Fantasy: Mob 库模组公共入口。
+ * 原版风格的小号 20x20 图标按钮：保留原版按钮皮肤，中央绘制一个物品图标，
+ * 可设置悬浮提示。用于生存物品栏配方书旁的「生物背包」入口。
  */
-public class FantasyMob implements ModInitializer {
+public class MobTabIconButton extends ButtonWidget {
 
-    public static final String MOD_ID = "fantasy_mob";
-    public static final Logger LOGGER = LoggerFactory.getLogger("FantasyMob");
+    private final ItemStack icon;
+
+    public MobTabIconButton(int x, int y, ItemStack icon, Text tooltip, PressAction onPress) {
+        super(x, y, 20, 20, Text.empty(), onPress, DEFAULT_NARRATION_SUPPLIER);
+        this.icon = icon;
+        if (tooltip != null) {
+            setTooltip(Tooltip.of(tooltip));
+        }
+    }
 
     @Override
-    public void onInitialize() {
-        MobNetworking.init();
-        MobCreativeTab.register();
-        LOGGER.info("[Fantasy:Mob] 库模组初始化完成。");
+    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.renderWidget(context, mouseX, mouseY, delta);
+        if (icon != null && !icon.isEmpty()) {
+            context.drawItem(icon, getX() + 2, getY() + 2);
+        }
     }
 }

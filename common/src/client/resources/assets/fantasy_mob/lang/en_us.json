@@ -1,0 +1,7 @@
+{
+  "itemGroup.fantasy_mob.mob_backpack": "Mob Packs",
+  "fantasy_mob.button.tooltip": "Open the backpack of your tamed mobs",
+  "fantasy_mob.selector.title": "Tamed Mobs",
+  "fantasy_mob.selector.empty": "You have no tamed mobs yet",
+  "fantasy_mob.selector.open": "Open backpack"
+}

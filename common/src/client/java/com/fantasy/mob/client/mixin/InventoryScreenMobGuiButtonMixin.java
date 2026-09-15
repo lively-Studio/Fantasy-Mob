@@ -23,16 +23,18 @@
 package com.fantasy.mob.client.mixin;
 
 import com.fantasy.mob.client.MobGuiButton;
+import com.fantasy.mob.client.widget.MobTabIconButton;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.ScreenPos;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * 在生存模式物品栏(E键)界面添加「已驯服生物」按钮（仅当 {@link MobGuiButton#isVisible()}）。
+ * 生存模式物品栏(E键)：在配方书按钮旁添加「生物背包」小号图标按钮
+ * （仅当 {@link MobGuiButton#isVisible()}）。
  */
 @Mixin(InventoryScreen.class)
 public abstract class InventoryScreenMobGuiButtonMixin {
@@ -41,14 +43,17 @@ public abstract class InventoryScreenMobGuiButtonMixin {
     private void fantasy_mob_addButton(CallbackInfo ci) {
         if (!MobGuiButton.isVisible()) return;
         InventoryScreen screen = (InventoryScreen) (Object) this;
-        MobGuiHandledScreenAccessor accessor = (MobGuiHandledScreenAccessor) screen;
         ScreenAccessor screenAccessor = (ScreenAccessor) screen;
-        int x = accessor.getX() + accessor.getBackgroundWidth() - 80;
-        int y = accessor.getY() + 5;
+        // 配方书按钮的位置 → 其右侧放我们的图标按钮
+        ScreenPos pos = screen.getRecipeBookButtonPos();
+        int x = pos.x() + 24;
+        int y = pos.y();
         Runnable onClick = MobGuiButton.getOnClick();
-        screenAccessor.invokeAddDrawableChild(ButtonWidget.builder(
+        screenAccessor.invokeAddDrawableChild(new MobTabIconButton(
+                x, y,
+                MobGuiButton.getIcon(),
                 MobGuiButton.getText(),
                 btn -> MinecraftClient.getInstance().execute(onClick)
-        ).dimensions(x, y, 78, 20).build());
+        ));
     }
 }
